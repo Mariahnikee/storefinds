@@ -8,10 +8,26 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!supabase) return;
-    supabase.auth.getUser().then(({ data }) => setUser(data.user || null));
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user || null));
-    return () => data.subscription.unsubscribe();
+    if (!supabase) return undefined;
+
+    let active = true;
+    supabase.auth.getUser()
+      .then(({ data, error: userError }) => {
+        if (!active) return;
+        if (userError) setError(userError.message);
+        setUser(data?.user || null);
+      })
+      .catch((userError) => {
+        if (active) setError(userError.message || "Unable to load your account.");
+      });
+
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) setUser(session?.user || null);
+    });
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
   }, []);
 
   async function signIn() {
@@ -21,18 +37,26 @@ export default function AuthPage() {
     }
     setLoading(true);
     setError("");
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/login` },
-    });
-    if (authError) {
-      setError(authError.message);
+    try {
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: `${window.location.origin}/login` },
+      });
+      if (authError) throw authError;
+    } catch (authError) {
+      setError(authError.message || "Unable to connect to Google sign-in.");
       setLoading(false);
     }
   }
 
   async function signOut() {
-    await supabase?.auth.signOut();
+    if (!supabase) return;
+    setError("");
+    const { error: signOutError } = await supabase.auth.signOut();
+    if (signOutError) {
+      setError(signOutError.message);
+      return;
+    }
     setUser(null);
   }
 

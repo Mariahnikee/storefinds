@@ -10,6 +10,7 @@ import ProductDetailPage from "./pages/home/ProductDetailPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
+import AuthPage from "./pages/AuthPage";
 import { CartProvider } from "./context/CartContext";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="shop" element={<ShopPage />} />
+            <Route path="login" element={<AuthPage />} />
             <Route path="product/:slug" element={<ProductDetailPage />} />
           </Route>
           <Route path="/checkout" element={<CheckoutPage />} />

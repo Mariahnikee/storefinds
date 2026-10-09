@@ -5,7 +5,7 @@ A React + Vite storefront for home decor and everyday essentials. Product catalo
 ## Stack
 - React, Vite, React Router, Tailwind CSS
 - Sanity product catalogue
-- Supabase Postgres for orders and Supabase Auth for Google sign-in
+- Supabase Postgres for orders and Supabase Auth for email/password accounts
 - Paystack payments
 - Netlify Functions for server-side checkout, payment verification, and admin order management
 - Mailgun for confirmation emails
@@ -31,13 +31,18 @@ netlify dev
 6. Deploy to Netlify with build command `npm run build`, publish directory `dist`, and functions directory `netlify/functions`.
 7. Set `SITE_URL` to the exact deployed site URL, then redeploy after adding or changing environment variables.
 
-## Google sign-in setup
-1. In Supabase Dashboard, open Authentication > Providers > Google and enable Google.
-2. In Google Cloud Console, configure the OAuth consent screen and create an OAuth client ID for a Web application.
-3. Add the Supabase callback URL shown by the Google provider settings to Google's Authorized redirect URIs.
-4. Paste the Google client ID and secret into the Supabase Google provider settings.
-5. In Supabase Authentication URL Configuration, add the local and production site URLs to the allowed redirect URLs.
-6. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the frontend environment. The login route is `/login`.
+## Email/password account setup
+1. In Supabase Authentication settings, enable the Email provider.
+2. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the frontend environment.
+3. The account page is available at `/login`. If email confirmation is enabled, new users must confirm their email before signing in.
+
+## Lesson 3: PWA and cross-device cart sync
+1. In Supabase SQL Editor, run `supabase/cart-sync.sql` to create the protected `user_carts` table and enable Realtime.
+2. Deploy the latest `main` branch to your HTTPS production domain. Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in the hosting provider and redeploy.
+3. The PWA manifest is `/manifest.webmanifest`; the production service worker is `/sw.js`.
+4. Open the deployed HTTPS URL in PWABuilder to check PWA readiness and package for Android.
+5. On a physical Android phone, install the APK and test the same email/password account on web and app. Add an item on each platform and confirm both carts update.
+
 
 ## Database and security
 - The server recalculates all prices from Sanity; it does not trust prices sent by the browser.

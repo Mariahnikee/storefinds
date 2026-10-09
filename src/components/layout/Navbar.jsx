@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { X, Menu, Search } from "lucide-react";
+import { X, Menu, Search, UserRound } from "lucide-react";
 import client from "../../client";
 
 const p = {

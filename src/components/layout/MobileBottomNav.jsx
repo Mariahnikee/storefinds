@@ -18,15 +18,6 @@ export default function MobileBottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-1050 sm:hidden h-17 bg-white/95 backdrop-blur-md border-t border-[#E7DDD2] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
       <div className="h-full max-w-md mx-auto flex items-center px-1">
-        <NavLink to="/" className={navClass} aria-label="Home">
-          <Home size={19} strokeWidth={1.8} />
-          <span>Home</span>
-        </NavLink>
-
-        <NavLink to="/shop" className={navClass} aria-label="Shop">
-          <ShoppingBag size={19} strokeWidth={1.8} />
-          <span>Shop</span>
-        </NavLink>
 
         <button
           type="button"
@@ -43,7 +34,18 @@ export default function MobileBottomNav() {
             )}
           </span>
           <span>Cart</span>
-        </button>
+        </button> 
+
+          <NavLink to="/shop" className={navClass} aria-label="Shop">
+          <ShoppingBag size={19} strokeWidth={1.8} />
+          <span>Shop</span>
+        </NavLink>
+
+        <NavLink to="/" className={navClass} aria-label="Home">
+          <Home size={19} strokeWidth={1.8} />
+          <span>Home</span>
+        </NavLink>
+
       </div>
     </nav>
   );

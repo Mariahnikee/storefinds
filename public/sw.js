@@ -19,6 +19,7 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/.netlify/functions/")) return;
 
   if (request.mode === "navigate") {
     event.respondWith(

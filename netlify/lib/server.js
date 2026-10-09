@@ -12,26 +12,18 @@ function required(name) {
 
 function supabaseHeaders(extra = {}) {
   const key = required("SUPABASE_SERVICE_ROLE_KEY");
-  return {
-    apikey: key,
-    Authorization: `Bearer ${key}`,
-    "Content-Type": "application/json",
-    ...extra,
-  };
+  return { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", ...extra };
 }
 
 async function db(path, options = {}) {
   const base = required("SUPABASE_URL").replace(/\/$/, "");
-  const response = await fetch(`${base}/rest/v1/${path}`, {
-    ...options,
-    headers: supabaseHeaders(options.headers || {}),
-  });
+  const response = await fetch(`${base}/rest/v1/${path}`, { ...options, headers: supabaseHeaders(options.headers || {}) });
   const text = await response.text();
   let data = null;
   try { data = text ? JSON.parse(text) : null; } catch { data = text; }
   if (!response.ok) {
-    const error = typeof data === "object" ? data?.message || data?.details || data?.hint : data;
-    throw new Error(error || `Supabase request failed (${response.status})`);
+    const message = typeof data === "object" ? data?.message || data?.details || data?.hint : data;
+    throw new Error(message || `Supabase request failed (${response.status})`);
   }
   return data;
 }
@@ -52,16 +44,10 @@ async function getSanityProducts(slugs) {
 async function paystackRequest(path, options = {}) {
   const response = await fetch(`https://api.paystack.co${path}`, {
     ...options,
-    headers: {
-      Authorization: `Bearer ${required("PAYSTACK_SECRET_KEY")}`,
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
+    headers: { Authorization: `Bearer ${required("PAYSTACK_SECRET_KEY")}`, "Content-Type": "application/json", ...(options.headers || {}) },
   });
   const data = await response.json();
-  if (!response.ok || !data.status) {
-    throw new Error(data.message || "Paystack request failed.");
-  }
+  if (!response.ok || !data.status) throw new Error(data.message || "Paystack request failed.");
   return data.data;
 }
 
@@ -73,20 +59,15 @@ async function sendOrderEmail(order) {
     console.warn("Mailgun is not configured; order email was not sent.");
     return false;
   }
-
   const amount = Number(order.amount).toLocaleString("en-NG");
   const form = new URLSearchParams({
-    from,
-    to: order.customer.email,
+    from, to: order.customer.email,
     subject: `Shop MK Finds order confirmed — ${order.order_id}`,
     text: `Hi ${order.customer.name},\n\nYour payment has been confirmed and your order ${order.order_id} is received.\nProducts total: ₦${amount}.\n\nDelivery is arranged separately. Thank you for shopping with Shop MK Finds.`,
   });
   const response = await fetch(`https://api.mailgun.net/v3/${domain}/messages`, {
     method: "POST",
-    headers: {
-      Authorization: `Basic ${Buffer.from(`api:${key}`).toString("base64")}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    headers: { Authorization: `Basic ${Buffer.from(`api:${key}`).toString("base64")}`, "Content-Type": "application/x-www-form-urlencoded" },
     body: form,
   });
   if (!response.ok) {
@@ -98,16 +79,10 @@ async function sendOrderEmail(order) {
 
 function mapOrder(row) {
   return {
-    orderId: row.order_id,
-    customer: row.customer,
-    delivery: row.delivery,
-    items: row.items,
-    amount: Number(row.amount),
-    paymentReference: row.payment_reference,
-    paymentStatus: row.payment_status,
-    orderStatus: row.order_status,
-    createdAt: row.created_at,
+    orderId: row.order_id, customer: row.customer, delivery: row.delivery, items: row.items,
+    amount: Number(row.amount), paymentReference: row.payment_reference,
+    paymentStatus: row.payment_status, orderStatus: row.order_status, createdAt: row.created_at,
   };
 }
 
-module.exports = { json, required, db, getSanityProducts, paystackRequest, sendOrderEmail, mapOrder };
+export { json, required, db, getSanityProducts, paystackRequest, sendOrderEmail, mapOrder };

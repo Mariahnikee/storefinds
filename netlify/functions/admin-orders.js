@@ -1,4 +1,4 @@
-const { json, required, db, mapOrder } = require("../lib/server.js");
+import { json, db } from "../lib/server.js";
 
 function authorized(event) {
   const expected = process.env.ADMIN_TOKEN;
@@ -6,7 +6,11 @@ function authorized(event) {
   return Boolean(expected && header === `Bearer ${expected}`);
 }
 
-exports.handler = async (event) => {
+function mapOrder(row) {
+  return { orderId: row.order_id, customer: row.customer, delivery: row.delivery, items: row.items, amount: Number(row.amount), paymentReference: row.payment_reference, paymentStatus: row.payment_status, orderStatus: row.order_status, createdAt: row.created_at };
+}
+
+export const handler = async (event) => {
   if (!["GET", "PATCH"].includes(event.httpMethod)) return json(405, { error: "Method not allowed" });
   if (!authorized(event)) return json(401, { error: "Unauthorized" });
   try {
@@ -14,13 +18,11 @@ exports.handler = async (event) => {
       const rows = await db("orders?select=*&order=created_at.desc&limit=200");
       return json(200, { orders: (rows || []).map(mapOrder) });
     }
-
     const body = JSON.parse(event.body || "{}");
     const allowed = ["processing", "ready_for_delivery", "shipped", "delivered", "cancelled"];
     if (!body.id || !allowed.includes(body.orderStatus)) return json(400, { error: "Invalid order status update." });
     const rows = await db(`orders?order_id=eq.${encodeURIComponent(String(body.id))}&select=*`, {
-      method: "PATCH",
-      headers: { Prefer: "return=representation" },
+      method: "PATCH", headers: { Prefer: "return=representation" },
       body: JSON.stringify({ order_status: body.orderStatus }),
     });
     if (!rows?.length) return json(404, { error: "Order not found." });

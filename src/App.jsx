@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "./components/layout/Mainlayout";
 import ScrollToTop from "./components/layout/ScrollToTop";
 import CartWidget from "./components/cart/CartWidget";
-import WhatsAppButton from "./components/WhatsAppButton";
 import Home from "./pages/home/Home";
 import ShopPage from "./pages/home/ShopPage";
 import ProductDetailPage from "./pages/home/ProductDetailPage";
@@ -30,7 +29,6 @@ function App() {
           <Route path="/admin/orders" element={<AdminOrdersPage />} />
         </Routes>
         <CartWidget />
-        <WhatsAppButton />
       </Router>
     </CartProvider>
   );

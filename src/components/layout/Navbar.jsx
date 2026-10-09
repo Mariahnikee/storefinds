@@ -480,6 +480,9 @@ export default function Navbar() {
   </button>
 
   <SocialLinks />
+  <Link to="/login" aria-label="Your account" title="Your account" style={{ width: 34, height: 34, borderRadius: "50%", background: p.beige, border: `1px solid ${p.taupe}`, display: "flex", alignItems: "center", justifyContent: "center", color: p.burgundy, flexShrink: 0 }}>
+    <UserRound size={18} />
+  </Link>
 </div>
         </div>
 

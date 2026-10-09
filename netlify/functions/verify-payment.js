@@ -28,6 +28,16 @@ export const handler = async (event) => {
         return json(200, { paid: true, order: mapOrder(paidOrder), emailSent });
       }
     }
+    if (row.payment_status === "paid" && !row.confirmation_email_sent_at) {
+      const emailSent = await sendOrderEmail(row);
+      if (emailSent) {
+        await db(`orders?payment_reference=eq.${encodeURIComponent(reference)}`, {
+          method: "PATCH", headers: { Prefer: "return=minimal" },
+          body: JSON.stringify({ confirmation_email_sent_at: new Date().toISOString() }),
+        }).catch((error) => console.error("Could not record email status:", error));
+      }
+      return json(200, { paid: true, order: mapOrder(row), emailSent });
+    }
     return json(200, { paid: row.payment_status === "paid", order: mapOrder(row) });
   } catch (error) {
     console.error("verify-payment:", error);

@@ -15,9 +15,9 @@ export default function CartWidget() {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} aria-label="Open shopping cart" className="hidden sm:flex fixed right-4 bottom-4 z-[1100] items-center gap-2 bg-[#6D213C] text-white rounded-full px-3.5 sm:px-5 py-3 shadow-xl hover:bg-[#8B2D4F] transition">
+      <button onClick={() => setOpen(true)} aria-label="Open shopping cart" className="flex fixed right-3 sm:right-4 bottom-3 sm:bottom-4 z-[1100] items-center gap-2 bg-[#6D213C] text-white rounded-full px-3.5 sm:px-5 py-3 shadow-xl hover:bg-[#8B2D4F] transition">
         <span className="relative"><ShoppingBag size={19}/><span className="absolute -top-2 -right-2 min-w-5 h-5 px-1 rounded-full bg-white text-[#6D213C] text-[10px] font-bold flex items-center justify-center">{itemCount}</span></span>
-        <span className="text-sm font-semibold">Cart · ₦{subtotal.toLocaleString()}</span>
+        <span className="text-sm font-semibold">{/* Keep the mobile cart control compact. */}<span className="sm:hidden">Cart</span><span className="hidden sm:inline">Cart · ₦{subtotal.toLocaleString()}</span></span>
       </button>
 
       {open && (

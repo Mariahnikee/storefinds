@@ -451,6 +451,10 @@ export default function Navbar() {
           <div className="desktop-social" style={{ flexShrink: 0 }}>
             <SocialLinks />
           </div>
+          <Link to="/login" aria-label="Your account" title="Your account" style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", color: p.burgundy, textDecoration: "none", fontSize: "0.8rem", fontWeight: 700, whiteSpace: "nowrap", flexShrink: 0 }}>
+            <UserRound size={18} />
+            <span>Account</span>
+          </Link>
 
           {/* MOBILE ICONS */}
           <div
